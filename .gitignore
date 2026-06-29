@@ -1,0 +1,25 @@
+# Build output
+build/
+build-*/
+cmake-build-*/
+out/
+*.o
+*.a
+*.so
+*.dylib
+*.dll
+
+# Generated artifacts
+*.mid
+!docs/**/*.mid
+
+# JUCE fetch cache (if checked out locally)
+JUCE/
+_deps/
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+*.user
+Builds/
