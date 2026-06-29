@@ -23,7 +23,8 @@ add_library(rhythm_core STATIC
     src/core/Pattern.cpp
     src/core/Progression.cpp
     src/core/Generator.cpp
-    src/core/MidiFile.cpp)
+    src/core/MidiFile.cpp
+    src/core/WavSynth.cpp)
 target_include_directories(rhythm_core PUBLIC src/core)
 target_compile_features(rhythm_core PUBLIC cxx_std_17)
 set_target_properties(rhythm_core PROPERTIES POSITION_INDEPENDENT_CODE ON)

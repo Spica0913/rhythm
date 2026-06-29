@@ -3,6 +3,7 @@
 #include "Generator.h"
 #include "MidiFile.h"
 #include "Progression.h"
+#include "WavSynth.h"
 
 #include <cstdio>
 #include <cstring>
@@ -69,6 +70,7 @@ int main(int argc, char** argv)
             "  --no-voiceleading                 disable voice leading\n"
             "  --swing 0.0                       swing amount (0..1)\n"
             "  --out rhythm.mid                  output MIDI file\n"
+            "  --wav rhythm.wav                  also render an audio preview\n"
             "  --list                            list voicings/patterns\n");
         return 0;
     }
@@ -84,6 +86,7 @@ int main(int argc, char** argv)
     int octave         = std::atoi(argValue(argc, argv, "--octave", "0"));
     double swing       = std::atof(argValue(argc, argv, "--swing", "0"));
     std::string out    = argValue(argc, argv, "--out", "rhythm.mid");
+    const char* wavArg = argValue(argc, argv, "--wav", "");
 
     bool bass = false, voiceLeading = true;
     for (int i = 1; i < argc; ++i) {
@@ -116,6 +119,14 @@ int main(int argc, char** argv)
     if (!writeMidiFile(out, seq, bpm)) {
         std::printf("Failed to write '%s'\n", out.c_str());
         return 1;
+    }
+
+    std::string wav = wavArg;
+    if (!wav.empty()) {
+        if (!writeWavPreview(wav, seq, bpm))
+            std::printf("Warning: failed to write WAV '%s'\n", wav.c_str());
+        else
+            std::printf("Audio preview -> %s\n", wav.c_str());
     }
 
     std::printf("Generated %zu notes over %.0f beats -> %s\n",

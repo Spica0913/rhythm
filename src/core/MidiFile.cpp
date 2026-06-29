@@ -1,4 +1,5 @@
 #include "MidiFile.h"
+// (WavSynth lives in its own translation unit; see WavSynth.cpp)
 
 #include <algorithm>
 #include <cmath>
