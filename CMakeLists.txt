@@ -69,11 +69,14 @@ if(RHYTHM_BUILD_PLUGIN)
         BUNDLE_ID               "com.rhythmaudio.rhythm"
         PLUGIN_MANUFACTURER_CODE Rhym
         PLUGIN_CODE             Rhy1
-        IS_MIDI_EFFECT          TRUE
+        # Hosted as an instrument that emits MIDI. Ableton Live / FL / Bitwig
+        # have no third-party MIDI-effect slot, so a MIDI generator must load
+        # as an instrument and have its MIDI output routed to another track.
+        IS_SYNTH                TRUE
         NEEDS_MIDI_INPUT        TRUE
         NEEDS_MIDI_OUTPUT       TRUE
         EDITOR_WANTS_KEYBOARD_FOCUS TRUE
-        COPY_PLUGIN_AFTER_BUILD FALSE
+        COPY_PLUGIN_AFTER_BUILD TRUE
         FORMATS                 VST3 Standalone AU)
 
     target_sources(RhythmPlugin PRIVATE

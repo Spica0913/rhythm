@@ -41,7 +41,8 @@ PatternId patternFromIndex(int i)
 } // namespace
 
 RhythmAudioProcessor::RhythmAudioProcessor()
-    : AudioProcessor(BusesProperties()), // MIDI effect: no audio buses
+    : AudioProcessor(BusesProperties() // instrument: silent stereo output
+          .withOutput("Output", juce::AudioChannelSet::stereo(), true)),
       apvts(*this, nullptr, "PARAMS", createLayout())
 {
     // Default progression and meter live in the value tree as properties.
@@ -108,6 +109,15 @@ void RhythmAudioProcessor::valueTreePropertyChanged(juce::ValueTree&,
                                                     const juce::Identifier&)
 {
     sequenceDirty.store(true);
+}
+
+bool RhythmAudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts) const
+{
+    // Accept a mono or stereo (silent) output; the plugin generates MIDI, not audio.
+    const auto out = layouts.getMainOutputChannelSet();
+    return out == juce::AudioChannelSet::stereo()
+        || out == juce::AudioChannelSet::mono()
+        || out == juce::AudioChannelSet::disabled();
 }
 
 void RhythmAudioProcessor::prepareToPlay(double sampleRate, int)

@@ -1,8 +1,13 @@
 # Rhythm
 
-A VST/AU MIDI-effect plugin (built with [JUCE](https://juce.com)) that turns
+A VST3/AU instrument plugin (built with [JUCE](https://juce.com)) that turns
 **chord progressions** into **voicings**, **accompaniment patterns**, and
 **rhythm patterns** — for any chord progression you throw at it.
+
+It is hosted as an **instrument that generates MIDI** (rather than audio): you
+load it on a track and route its MIDI output into the sound you actually want to
+hear. This is the form that works in Ableton Live, FL Studio and Bitwig, which
+have no third-party MIDI-effect slot.
 
 You can drive it two ways:
 
@@ -90,9 +95,29 @@ cmake -S . -B build -DJUCE_PATH=../JUCE
 cmake --build build -j
 ```
 
-Built plug-ins land under `build/RhythmPlugin_artefacts/`. Copy the `.vst3`
-(or `.component` on macOS) into your plugin folder, or run the Standalone build
-directly.
+Built plug-ins land under `build/RhythmPlugin_artefacts/`. The build is set to
+copy them into your user plugin folder automatically (`COPY_PLUGIN_AFTER_BUILD`);
+on macOS that is `~/Library/Audio/Plug-Ins/VST3` and `.../Components`.
+
+### Using it in a DAW
+
+Rhythm produces **MIDI**, not sound, so chain it into an instrument:
+
+**Ableton Live**
+1. On a MIDI track, load **Rhythm** as the instrument. Type your progression
+   and pick a voicing/pattern.
+2. Add a second MIDI track with the sound you want (e.g. a piano/synth).
+3. On that second track set **MIDI From → (the Rhythm track)**, and in the box
+   just below choose the **Rhythm** plugin as the sub-source.
+4. Set the second track's **Monitor** to **In**, and arm it.
+5. Press play — Rhythm follows Live's transport (Progression mode), or play
+   chords into the Rhythm track to comp them live (Live mode).
+
+**Logic Pro:** load the AU on an instrument track; route its MIDI to another
+track via the environment/IAC, or use the bundled `rhythm_cli` to export MIDI.
+
+**Quick alternative (no plugin needed):** export a `.mid` with `rhythm_cli`
+(below) and drag it onto a track.
 
 > **Note:** this repository was developed in a sandbox whose network policy
 > blocks `github.com`, so the JUCE plugin target could not be compiled here.
