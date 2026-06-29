@@ -12,6 +12,7 @@ endif()
 option(RHYTHM_BUILD_PLUGIN "Build the JUCE plugin (downloads JUCE)" ON)
 option(RHYTHM_BUILD_TESTS  "Build the core unit tests" ON)
 option(RHYTHM_BUILD_CLI    "Build the rhythm_cli MIDI export tool" ON)
+option(RHYTHM_COPY_PLUGIN  "Copy the built plugin into the user plugin folder" ON)
 
 # ---------------------------------------------------------------------------
 # Core music engine — pure C++, no JUCE dependency. Reusable & unit-testable.
@@ -76,7 +77,7 @@ if(RHYTHM_BUILD_PLUGIN)
         NEEDS_MIDI_INPUT        TRUE
         NEEDS_MIDI_OUTPUT       TRUE
         EDITOR_WANTS_KEYBOARD_FOCUS TRUE
-        COPY_PLUGIN_AFTER_BUILD TRUE
+        COPY_PLUGIN_AFTER_BUILD ${RHYTHM_COPY_PLUGIN}
         FORMATS                 VST3 Standalone AU)
 
     target_sources(RhythmPlugin PRIVATE

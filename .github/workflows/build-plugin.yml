@@ -1,0 +1,55 @@
+name: Build plugin
+
+# Builds the Rhythm plugin (VST3 / AU) on real Windows and macOS machines and
+# uploads the result so it can be downloaded without installing any tools.
+# Run automatically on pushes to the feature branch, or manually from the
+# Actions tab via "Run workflow".
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "claude/**", "main", "master" ]
+
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            name: Windows
+          - os: macos-latest
+            name: macOS
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        run: >
+          cmake -S . -B build
+          -DCMAKE_BUILD_TYPE=Release
+          -DRHYTHM_BUILD_TESTS=OFF
+          -DRHYTHM_BUILD_CLI=OFF
+          -DRHYTHM_COPY_PLUGIN=OFF
+
+      - name: Build
+        run: cmake --build build --config Release --parallel
+
+      - name: Collect artefacts
+        shell: bash
+        run: |
+          mkdir -p dist
+          # VST3 (folder bundle on every OS)
+          cp -R build/RhythmPlugin_artefacts/Release/VST3/*.vst3 dist/ || true
+          # Audio Unit (macOS only)
+          cp -R build/RhythmPlugin_artefacts/Release/AU/*.component dist/ 2>/dev/null || true
+          ls -R dist
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: Rhythm-${{ matrix.name }}
+          path: dist/**
+          if-no-files-found: error
